@@ -26,7 +26,7 @@ def generate_data():
         conn.execute(text("DELETE FROM dim_Devices"))
 
         # 2. Dimenze zarizeni
-                print("Vytvarim seznam zarizeni...")
+        print("Vytvarim seznam zarizeni...")
         devices = [
             {'Platform': 'Android TV', 'AppVersion': '2.4.1', 'ConnectionType': 'WiFi'},
             {'Platform': 'iOS Mobile', 'AppVersion': '3.0.1', 'ConnectionType': '5G'},
@@ -36,7 +36,7 @@ def generate_data():
         pd.DataFrame(devices).to_sql('dim_Devices', conn, if_exists='append', index=False)
 
         # 3. Dimenze obsahu
-                print("Vytvarim katalog poradu...")
+        print("Vytvarim katalog poradu...")
         content = [
             {'Title': 'Ordinace v Ruzove zahrade 2', 'Category': 'Series', 'SubGenre': 'Soap', 'ProductionCost_USD': 50000, 'Rating_IMDB': 4.5, 'TargetAudience': 'Adults'},
             {'Title': 'Specialiste', 'Category': 'Series', 'SubGenre': 'Crime', 'ProductionCost_USD': 120000, 'Rating_IMDB': 7.2, 'TargetAudience': 'Adults'},
@@ -48,7 +48,7 @@ def generate_data():
         pd.DataFrame(content).to_sql('dim_MediaContent', conn, if_exists='append', index=False)
 
         # 4. Dimenze uzivatelu
-                print("Generuji uzivatele...")
+        print("Generuji uzivatele...")
         users = []
         for _ in range(100):
             users.append({
@@ -61,7 +61,7 @@ def generate_data():
         pd.DataFrame(users).to_sql('dim_UserBase', conn, if_exists='append', index=False)
 
         # 5. Faktova tabulka sledovanosti
-                print("Simuluji historii sledovanosti (Big Data)...")
+        print("Simuluji historii sledovanosti (Big Data)...")
         engagements = []
         
         num_users = 100
@@ -71,7 +71,7 @@ def generate_data():
         for _ in range(2000):
             content_id = random.randint(1, num_content)
             
-                        watch_time = random.randint(2, 120)
+            watch_time = random.randint(2, 120)
             
             # ~30 % prehrani je prerusenych
             is_interrupted = 1 if random.random() < 0.3 else 0 
