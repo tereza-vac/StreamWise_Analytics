@@ -4,8 +4,7 @@ GO
 -- =========================================================
 -- 1. VIEW: ANALÝZA KVALITY OBSAHU (Content Performance)
 -- =========================================================
--- Business otázka: Které pořady "táhnou" a které lidé vypínají?
--- Používáme Window Functions (DENSE_RANK) pro žebříčky.
+-- Sledovanost a completion rate pořadů
 
 CREATE OR ALTER VIEW v_ContentPerformance AS
 SELECT 
@@ -14,12 +13,10 @@ SELECT
     c.TargetAudience,
     COUNT(e.EngagementID) AS TotalViews,
     
-    -- Metrika: Completion Rate (Kolik % lidí to dokoukalo?)
-    -- Pokud je pod 50 %, pořad je propadák.
+    -- Drop-off rate: podíl přerušených přehrání
     FORMAT(SUM(CAST(e.IsInterrupted AS INT)) * 1.0 / COUNT(e.EngagementID), 'P') AS DropOffRate,
     
-    -- Window Function: Pořadí v rámci kategorie
-    -- Toto ukazuje, že umíš pokročilé SQL (nejen GROUP BY)
+    -- Pořadí v rámci kategorie
     DENSE_RANK() OVER (PARTITION BY c.Category ORDER BY COUNT(e.EngagementID) DESC) as CategoryRank
 
 FROM fact_Engagement e
@@ -30,8 +27,7 @@ GO
 -- =========================================================
 -- 2. VIEW: FEATURE STORE PRO AI (Churn Prediction)
 -- =========================================================
--- Data Science tým potřebuje tabulku "jeden řádek = jeden uživatel".
--- Zde připravujeme "Features" (vstupy) pro model, který hledá nespokojené lidi.
+-- Jeden řádek = jeden uživatel
 
 CREATE OR ALTER VIEW v_UserChurnFeatures AS
 SELECT 
@@ -39,16 +35,14 @@ SELECT
     u.AgeGroup,
     u.Tier,
     
-    -- Feature 1: Engagement (Jak moc sleduje?)
+    -- Engagement
     COUNT(e.EngagementID) as TotalSessions,
     SUM(e.WatchTimeMinutes) as TotalMinutesWatched,
     
-    -- Feature 2: Tech Experience (Sekalo se mu to?)
-    -- Pokud má uživatel hodně bufferingu, pravděpodobně odejde ke konkurenci.
+    -- Technická kvalita (buffering)
     SUM(e.BufferingEvents) as TotalBufferingEvents,
     
-    -- Feature 3: Preference (Co má rád?)
-    -- Jednoduchá logika: Který žánr viděl naposledy
+    -- Naposledy sledovaný žánr
     MAX(c.Category) as LastWatchedCategory
 
 FROM dim_UserBase u

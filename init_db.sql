@@ -5,8 +5,8 @@ GO
 USE StreamWiseDB;
 GO
 
--- 1. Rozšířená Dimenze Obsahu (přidáváme metadata pro AI)
-DROP TABLE IF EXISTS fact_Engagement; -- Musíme smazat staré verze kvůli vazbám
+-- 1. Dimenze obsahu
+DROP TABLE IF EXISTS fact_Engagement; -- nejdřív fakta kvůli FK
 DROP TABLE IF EXISTS dim_MediaContent;
 CREATE TABLE dim_MediaContent (
     ContentID INT PRIMARY KEY IDENTITY(1,1),
@@ -18,7 +18,7 @@ CREATE TABLE dim_MediaContent (
     TargetAudience NVARCHAR(20) -- Kids, Adults, General
 );
 
--- 2. Dimenze Zařízení (Důležité pro technický monitoring)
+-- 2. Dimenze zařízení
 CREATE TABLE dim_Devices (
     DeviceID INT PRIMARY KEY IDENTITY(1,1),
     Platform NVARCHAR(50), -- Android, iOS, WebOS, Tizen
@@ -26,7 +26,7 @@ CREATE TABLE dim_Devices (
     ConnectionType NVARCHAR(20) -- WiFi, 4G, 5G, Ethernet
 );
 
--- 3. Rozšířená Dimenze Uživatelů
+-- 3. Dimenze uživatelů
 DROP TABLE IF EXISTS dim_UserBase;
 CREATE TABLE dim_UserBase (
     UserID INT PRIMARY KEY IDENTITY(1,1),
@@ -37,7 +37,7 @@ CREATE TABLE dim_UserBase (
     AcquisitionSource NVARCHAR(50) -- Facebook, Google, Direct
 );
 
--- 4. HLAVNÍ FAKTOVÁ TABULKA: Engagement (Sledovanost)
+-- 4. Faktová tabulka: Engagement
 CREATE TABLE fact_Engagement (
     EngagementID BIGINT PRIMARY KEY IDENTITY(1,1),
     UserID INT FOREIGN KEY REFERENCES dim_UserBase(UserID),
@@ -45,11 +45,11 @@ CREATE TABLE fact_Engagement (
     DeviceID INT FOREIGN KEY REFERENCES dim_Devices(DeviceID),
     StreamStartTimestamp DATETIME,
     WatchTimeMinutes INT,
-    IsInterrupted BIT, -- Vypnul to uživatel dřív?
-    BufferingEvents INT -- Technická kvalita (pro AI predikci churnu)
+    IsInterrupted BIT, -- přerušeno před koncem
+    BufferingEvents INT -- vstup pro churn model
 );
 
--- 5. FAKTOVÁ TABULKA: AdImpressions (Pro monetizaci)
+-- 5. Faktová tabulka: AdImpressions
 CREATE TABLE fact_AdImpressions (
     AdID INT PRIMARY KEY IDENTITY(1,1),
     EngagementID BIGINT FOREIGN KEY REFERENCES fact_Engagement(EngagementID),

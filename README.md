@@ -1,28 +1,35 @@
-# 📺 StreamWise Analytics: End-to-End Data Engineering Project
+# StreamWise Analytics
 
-## O projektu
-Tento projekt simuluje práci Data Engineera pro streamovací platformu (jako Voyo, Netflix). Cílem bylo vytvořit kompletní datovou pipelinu od generování dat až po finální business reporting a přípravu features pro AI modely.
+End-to-end datová pipeline pro fiktivní streamovací platformu: od generování syntetických dat přes hvězdicové schéma v SQL Serveru až po reporting v Power BI a přípravu features pro model predikce odchodu uživatelů (churn).
 
-Projekt řeší reálné problémy:
-* **Analýza sledovanosti** (Prime Time, Revenue).
-* **Segmentace zákazníků** (Free vs. Premium).
-* **AI Feature Engineering** (Predikce odchodu uživatelů na základě technických chyb).
+## Co projekt obsahuje
 
-## Tech Stack
-* **Python (ETL):** Generování syntetických dat, čištění a transformace (Pandas).
-* **SQL Server (Data Warehousing):** Návrh hvězdicového schématu (Star Schema), Views, Window Functions.
-* **SQLAlchemy:** ORM pro komunikaci Pythonu s databází.
-* **Power BI:** Vizualizace klíčových metrik a reporting.
+- **Analýza sledovanosti** – prime time, odhad tržeb, denní provoz.
+- **Segmentace uživatelů** – typ předplatného, demografie, oblíbené žánry.
+- **Features pro churn model** – vztah mezi věrností uživatele a technickými problémy (buffering).
 
-## Struktura projektu
-* `data_generator.py` - ETL skript pro generování dat a plnění DB.
-* `deploy_analytics.py` - Nasazení SQL Views a automatický export dat pro BI.
-* `StreamWise_Dashboard.pbix` - Interaktivní report (Power BI).
-* `bi_exports/` - CSV soubory připravené pro reporting.
+## Technologie
 
-## Ukázka vizualizace
-Projekt obsahuje analýzu, která odhaluje korelaci mezi věrností uživatele a technickými chybami (Buffering), což slouží jako vstup pro Churn Prediction Model.
+- **Python** (pandas) – generování syntetických dat a ETL.
+- **SQL Server** – hvězdicové schéma, views, window functions.
+- **SQLAlchemy** – připojení Pythonu k databázi.
+- **Power BI** – vizualizace klíčových metrik.
 
----
-*Autor: Tereza Vačina*# StreamWise_Analytics
-This project demonstrates an end-to-end data pipeline for a modern streaming platform. It includes synthetic data generation, relational modeling (Star Schema), and preparation of analytical layers for Machine Learning models.
+## Struktura
+
+- `init_db.sql` – vytvoření databáze a tabulek (dimenze + fakta).
+- `data_generator.py` – naplnění databáze syntetickými daty.
+- `analytics.sql`, `advanced_queries.sql` – analytické views a dotazy.
+- `deploy_analytics.py` – nasazení views a export CSV pro BI.
+- `bi_exports/` – exportovaná data.
+- `StreamWise_Dashboard.pbix` – report v Power BI.
+
+## Spuštění
+
+1. V SQL Serveru (lokálně `localhost\SQLEXPRESS`) spusťte `init_db.sql`.
+2. `pip install pandas sqlalchemy pyodbc`
+3. `python data_generator.py`
+4. `python deploy_analytics.py`
+5. Otevřete `StreamWise_Dashboard.pbix` v Power BI Desktop.
+
+Autor: Tereza Vačina
